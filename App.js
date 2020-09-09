@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from "./Components/Login";
 import SignUp from "./Components/SignUp";
 import Users from "./Components/Users";
-import Navigation from "./Components/Navigation"
+import Navigation from "./Components/Navigation";
 
 
 const Stack = createStackNavigator();
@@ -20,6 +20,7 @@ class App extends Component {
           <Stack.Screen name="Home" component={Navigation} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Update" component={SignUp} />
           <Stack.Screen name="Users" component={Users} />
         </Stack.Navigator>
       </NavigationContainer>

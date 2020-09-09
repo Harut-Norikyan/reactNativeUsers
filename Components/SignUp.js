@@ -14,13 +14,32 @@ class SignUp extends Component {
         status: '',
     }
 
-    handleSubmit = async () => {
+    handleSubmitOrUpdate = () => {
+        if (this.props.route.name === "SignUp") {
+            this.handleSignUp();
+        };
+        if (this.props.route.name === "Update") {
+            this.handleUpdate();
+        };
+    };
+
+    handleSignUp = async () => {
         let { firstName, lastName, email, psw, pswrepeat, phone } = this.state;
-        await axios.post(`http://386d4cf063b8.ngrok.io/users/add-user`, { firstName, lastName, email, psw, phone })
+        await axios.post(`http://a3633ee4f796.ngrok.io/users/add-user`, { firstName, lastName, email, psw, phone })
             .then(res => {
                 this.setState({
                     status: res.data.status
-                })
+                });
+            });
+    };
+
+    handleUpdate = async () => {
+        let { firstName, lastName, email, psw, phone, id } = this.state;
+        await axios.post(`http://a3633ee4f796.ngrok.io/users/update/${this.props.route.params}`, { firstName, lastName, email, psw, phone })
+            .then(res => {
+                this.setState({
+                    status: res.data.status
+                });
             });
     };
 
@@ -30,7 +49,17 @@ class SignUp extends Component {
                 'Good',
                 'User Added',
                 [
-                    { text: 'OK', onPress: () => this.props.navigation.navigate("Home")},
+                    { text: 'OK', onPress: () => this.props.navigation.navigate("Home") },
+                ]
+            );
+        }
+
+        if (this.state.status === "user updated") {
+            Alert.alert(
+                'Good',
+                'User updated',
+                [
+                    { text: 'OK', onPress: () => this.props.navigation.navigate("Home") },
                 ]
             );
         }
@@ -70,24 +99,24 @@ class SignUp extends Component {
                         placeholder="Repeat Password!"
                         onChangeText={(text) => this.setState({ pswrepeat: text })}
                         secureTextEntry={true}
-                    />                   
-                        <View style={styles.signUpBlock}>
-                            <TouchableOpacity
-                                onPress={()=>this.props.navigation.navigate("Home")}
-                            >
-                                <Text style={styles.text}>
-                                    Cancel
+                    />
+                    <View style={styles.signUpBlock}>
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.navigate("Home")}
+                        >
+                            <Text style={styles.text}>
+                                Cancel
                                 </Text>
-                            </TouchableOpacity>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity
-                                onPress={() => this.handleSubmit()}
-                            >
-                                <Text style={[styles.text, { backgroundColor: "green" }]}>
-                                    Sign Up
-                                </Text>
-                            </TouchableOpacity>
-                        </View>                   
+                        <TouchableOpacity
+                            onPress={() => this.handleSubmitOrUpdate()}
+                        >
+                            <Text style={[styles.text, { backgroundColor: "green" }]}>
+                                {this.props.route.name ? this.props.route.name : null}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </ScrollView>
             </>
         );

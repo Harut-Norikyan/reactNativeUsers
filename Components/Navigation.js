@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -19,7 +19,7 @@ const Navigation = ({ navigation }) => {
             >
                 <Text style={styles.text}>
                     Go To Login
-          </Text>
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -28,7 +28,7 @@ const Navigation = ({ navigation }) => {
             >
                 <Text style={styles.text}>
                     Go To SignUp
-          </Text>
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -37,7 +37,7 @@ const Navigation = ({ navigation }) => {
             >
                 <Text style={styles.text}>
                     Go To Users
-        </Text>
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity

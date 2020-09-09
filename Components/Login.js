@@ -22,7 +22,7 @@ class Login extends Component {
 
     handleSubmit = async () => {
         let { email, psw } = this.state;
-        await axios.post(`http://386d4cf063b8.ngrok.io/users/login`, { email, psw })
+        await axios.post(`http://a3633ee4f796.ngrok.io/users/login`, { email, psw })
             .then(res => {
                 if (res.data.token) {
                     this.setState({

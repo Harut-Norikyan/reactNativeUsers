@@ -16,15 +16,17 @@ class Users extends Component {
 
     state = {
         data: [],
+        status: '',
     };
 
     async componentDidMount() {
-        await axios.get(`http://386d4cf063b8.ngrok.io/users/get-users`)
+        await axios.get(`http://a3633ee4f796.ngrok.io/users/get-users`)
             .then(res => {
                 this.setState({
-                    data: res.data
+                    data: res.data,
                 })
             });
+            
         let keys = []
         try {
             keys = await AsyncStorage.getAllKeys()
@@ -34,7 +36,7 @@ class Users extends Component {
         if (!keys.length) {
             this.props.navigation.navigate("Home")
         }
-
+        
     };
 
     handleDelete = async (id) => {
@@ -43,6 +45,8 @@ class Users extends Component {
                 console.log(res);
             });
     };
+
+
 
     render() {
         let { data } = this.state
@@ -57,7 +61,9 @@ class Users extends Component {
                             <Text><Text style={styles.bold}>Phone</Text> : {m.phone}</Text>
 
                             <View style={styles.updateBlock}>
-                                <TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => this.props.navigation.navigate(`Update`, m._id)}
+                                >
                                     <Text style={styles.text}>
                                         Update
                                 </Text>
@@ -70,7 +76,7 @@ class Users extends Component {
                                         Delete
                                 </Text>
                                 </TouchableOpacity>
-                               
+
                             </View>
                         </View>
                     </View>
