@@ -10,7 +10,7 @@ class Users extends Component {
     };
 
     async componentDidMount() {
-        await axios.get(`http://5d06956cf78e.ngrok.io/users/get-users`)
+        await axios.get(`http://6b0f0fe894f8.ngrok.io/users/get-users`)
             .then(res => {
                 this.setState({
                     data: res.data,
@@ -20,7 +20,7 @@ class Users extends Component {
 
     handleDelete = async (id) => {
         let { data } = this.state
-        await axios.delete(`http://5d06956cf78e.ngrok.io/users/delete/${id}`)
+        await axios.delete(`http://6b0f0fe894f8.ngrok.io/users/delete/${id}`)
             .then(res => {
                 if (res.data.status === "success") {
                     const newState = this.state;
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         width: "80%",
         borderWidth: 2,
         padding: 10,
-        margin: 5
+        margin: 5,
     },
     bold: {
         fontWeight: "bold"
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
         width: 80,
         textAlign: "center",
         backgroundColor: "blue",
+        marginRight:20
     },
     updateBlock: {
         flexDirection: 'row',

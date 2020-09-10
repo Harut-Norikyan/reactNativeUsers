@@ -2,8 +2,6 @@ import React, { Component } from "react"
 import { View, Text, ScrollView, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import axios from "axios";
 
-// ^\w+([\.-]?\w+)*(@)\w+.(\w{2,5})$  --email regexp
-
 class SignUp extends Component {
 
     state = {
@@ -14,22 +12,22 @@ class SignUp extends Component {
         pswrepeat: '',
         phone: "",
         status: '',
-
         firstNameError: '',
         lastNameError: '',
         emailError: '',
         phoneError: '',
         pswError: '',
         pswRepeatError: '',
-
-
-
-
+        nameValidation: new RegExp(/^[A-Za-z\s]{2,20}$/m),
+        emailValidaation: new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/),
+        phoneValidation: new RegExp(/\+?[0-9]{7,20}/),
+        passwordValidation: new RegExp(/(?=.*\d)(?=.*[a-z]).{5,}$/),
+        repeatPsw: ''
     };
 
     async componentDidMount() {
         if (this.props.route.params) {
-            await axios.get(`http://5d06956cf78e.ngrok.io/users/user/${this.props.route.params}`)
+            await axios.get(`http://6b0f0fe894f8.ngrok.io/users/user/${this.props.route.params}`)
                 .then(res => this.setState({
                     firstName: res.data.user.firstName,
                     lastName: res.data.user.lastName,
@@ -37,31 +35,28 @@ class SignUp extends Component {
                     phone: res.data.user.phone,
                 }));
         };
+        console.log(this.props.route.params);
     };
 
-    handleSubmitOrUpdate = () => {
-        if (this.props.route.name === "SignUp") {
-            this.handleSignUp();
-        };
-        if (this.props.route.name === "Update") {
-            this.handleUpdate();
-        };
-    };
-
-    handleSignUp = async () => {
-        let { firstName, lastName, email, psw, pswrepeat, phone } = this.state;
-        // await axios.post(`http://5d06956cf78e.ngrok.io/users/add-user`, { firstName, lastName, email, psw, phone })
-        //     .then(res => {
-        //         console.log(res, "res");
-        //         this.setState({
-        //             status: res.data.status
-        //         });
-        //     });
-
-        const nameValidation = new RegExp(/^[A-Za-z\s]{2,20}$/m)
-        const emailValidaation = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-        const phoneValidation = new RegExp(/\+?[0-9]{7,20}/);
-        const passwordValidation = new RegExp(/(?=.*\d)(?=.*[a-z]).{5,}$/);
+    handleSubmitOrUpdate = async () => {
+        const {
+            nameValidation,
+            emailValidaation,
+            phoneValidation,
+            passwordValidation,
+            psw,
+            firstName,
+            lastName,
+            email,
+            phone,
+            pswrepeat,
+            firstNameError,
+            lastNameError,
+            emailError,
+            phoneError,
+            pswError,
+            pswRepeatError,
+        } = this.state;
 
         await this.setState({
             firstNameError: nameValidation.test(firstName),
@@ -71,11 +66,35 @@ class SignUp extends Component {
             pswError: passwordValidation.test(psw),
             pswRepeatError: passwordValidation.test(pswrepeat)
         })
+
+        if (firstNameError && lastNameError && emailError && phoneError && pswError && pswRepeatError) {
+            if (psw === pswrepeat) {
+                if (this.props.route.name === "SignUp") {
+                    this.handleSignUp();
+                };
+                if (this.props.route.name === "Update") {
+                    this.handleUpdate();
+                };
+            } else this.setState({ repeatPsw: false })
+        }
+
+
+    };
+
+    handleSignUp = async () => {
+        let { firstName, lastName, email, psw, phone } = this.state;
+        await axios.post(`http://6b0f0fe894f8.ngrok.io/users/add-user`, { firstName, lastName, email, psw, phone })
+            .then(res => {
+                console.log(res, "res");
+                this.setState({
+                    status: res.data.status
+                });
+            });
     };
 
     handleUpdate = async () => {
         let { firstName, lastName, email, psw, phone } = this.state;
-        await axios.post(`http://5d06956cf78e.ngrok.io/users/update/${this.props.route.params}`, { firstName, lastName, email, psw, phone })
+        await axios.post(`http://6b0f0fe894f8.ngrok.io/users/update/${this.props.route.params}`, { firstName, lastName, email, psw, phone })
             .then(res => {
                 this.setState({
                     status: res.data.status
@@ -85,7 +104,7 @@ class SignUp extends Component {
 
     render() {
 
-        let { firstNameError, lastNameError, emailError, phoneError, pswError, pswRepeatError } = this.state
+        let { firstNameError, lastNameError, emailError, phoneError, pswError, pswRepeatError, repeatPsw } = this.state
 
         if (this.state.status === "done") {
             Alert.alert(
@@ -164,9 +183,10 @@ class SignUp extends Component {
                         required
                     />
                     <View style={styles.errorBlock}>{pswRepeatError === false ? <Text style={styles.errorText}>Password is not valid!</Text> : null}</View>
+                    <View style={styles.errorBlock}>{repeatPsw === false ? <Text style={styles.errorText}>Password mismatch!</Text> : null}</View>
                     <View style={styles.signUpBlock}>
                         <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate("Home")}
+                            onPress={() => this.props.navigation.goBack()}
                         >
                             <Text style={styles.text}>
                                 Cancel
@@ -190,6 +210,7 @@ class SignUp extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginTop: 50,
     },
     inputs: {
         borderWidth: 1,
@@ -212,6 +233,7 @@ const styles = StyleSheet.create({
         width: 100,
         textAlign: "center",
         backgroundColor: "#2196F3",
+        margin: 10
     },
     signUpBlock: {
         justifyContent: "center",
