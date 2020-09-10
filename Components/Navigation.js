@@ -1,54 +1,53 @@
-
-import React, { useEffect } from "react";
-import { Button, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React,{useEffect} from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const Navigation = ({ navigation }) => {
 
     async function logOut() {
-        await AsyncStorage.removeItem("token")
-    }
+        await AsyncStorage.removeItem("token");
+    };
 
-
+    let token = null;
+    async function loginOrUsers() {
+        token = await AsyncStorage.getItem("token");
+        if (token !== null) {
+            navigation.navigate('Users');
+        } else navigation.navigate('Login');
+    };
+    
     return (
+        <>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Login')}
+                    style={styles.touchableHighlight}
+                >
+                    <Text style={styles.text}>Log In</Text>
+                </TouchableOpacity>
 
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('Login')}
-                style={styles.touchableHighlight}
-            >
-                <Text style={styles.text}>
-                    Go To Login
-                </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('SignUp')}
+                    style={styles.touchableHighlight}
+                >
+                    <Text style={styles.text}>Sign Up</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                onPress={() => navigation.navigate('SignUp')}
-                style={styles.touchableHighlight}
-            >
-                <Text style={styles.text}>
-                    Go To SignUp
-                </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    // onPress={loginOrUsers}
+                    style={styles.touchableHighlight}
+                >
+                    <Text style={styles.text}>Users Page</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                onPress={() => navigation.navigate('Users')}
-                style={styles.touchableHighlight}
-            >
-                <Text style={styles.text}>
-                    Go To Users
-                </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={styles.touchableHighlight}
-                onPress={logOut}
-            >
-                <Text style={styles.text}>
-                    Log Out
-          </Text>
-            </TouchableOpacity>
-        </View>
+                <TouchableOpacity
+                    style={styles.touchableHighlight}
+                    onPress={logOut}
+                >
+                    <Text style={[styles.text,{backgroundColor : "red"}]}>Log Out</Text>
+                </TouchableOpacity>
+            </View>
+        </>
     );
 
 }
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 5,
         borderColor: 'black',
-        backgroundColor: "red",
+        backgroundColor: "#2196F3",
         color: "#fff",
         fontSize: 15,
         textTransform: "uppercase",

@@ -10,9 +10,10 @@ import Navigation from "./Components/Navigation";
 
 const Stack = createStackNavigator();
 
-class App extends Component { 
+class App extends Component {
 
-  render(){
+
+  render() {
 
     return (
       <NavigationContainer>

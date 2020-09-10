@@ -1,15 +1,6 @@
 import React, { Component } from "react";
-import axios from "axios"
-
-import {
-    StyleSheet,
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Button
-} from 'react-native';
-
+import axios from "axios";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 class Login extends Component {
@@ -22,22 +13,20 @@ class Login extends Component {
 
     handleSubmit = async () => {
         let { email, psw } = this.state;
-        await axios.post(`http://a3633ee4f796.ngrok.io/users/login`, { email, psw })
+        await axios.post(`http://5d06956cf78e.ngrok.io/users/login`, { email, psw })
             .then(res => {
                 if (res.data.token) {
                     this.setState({
                         token: AsyncStorage.setItem("token", res.data.token)
-                    })
-                    this.props.navigation.navigate("Users")
-                }
+                    });
+                    this.props.navigation.navigate("Users");
+                };
             });
-          
     };
 
     render() {
-
         return (
-            <View>
+            <>
                 <TextInput
                     style={styles.inputs}
                     placeholder="Email !"
@@ -45,6 +34,8 @@ class Login extends Component {
                     required
                 />
                 <TextInput
+                    type="password"
+                    secureTextEntry={true}
                     style={styles.inputs}
                     placeholder="Password !"
                     onChangeText={(text) => this.setState({ psw: text })}
@@ -52,22 +43,18 @@ class Login extends Component {
                 />
                 <View style={styles.signUpBlock}>
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate("Home")}
-                    >
-                        <Text style={styles.text}>
-                            Cancel
-                                </Text>
+                        onPress={() => this.props.navigation.navigate("Home")}>
+                        <Text style={styles.text}>Cancel</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => this.handleSubmit()}
-                    >
+                        onPress={() => this.handleSubmit()}>
                         <Text style={[styles.text, { backgroundColor: "green" }]}>
                             Login
                                 </Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </>
         )
     }
 }
@@ -93,7 +80,7 @@ const styles = StyleSheet.create({
         textTransform: "uppercase",
         width: 100,
         textAlign: "center",
-        backgroundColor: "blue",
+        backgroundColor: "#2196F3",
     },
     signUpBlock: {
         justifyContent: "center",
