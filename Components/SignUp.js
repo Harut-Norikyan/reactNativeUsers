@@ -22,12 +22,13 @@ class SignUp extends Component {
         emailValidaation: new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/),
         phoneValidation: new RegExp(/\+?[0-9]{7,20}/),
         passwordValidation: new RegExp(/(?=.*\d)(?=.*[a-z]).{5,}$/),
-        repeatPsw: ''
+        repeatPsw: '',
+        errors: {}
     };
 
     async componentDidMount() {
         if (this.props.route.params) {
-            await axios.get(`http://6b0f0fe894f8.ngrok.io/users/user/${this.props.route.params}`)
+            await axios.get(`http://a0e8115bb31f.ngrok.io/users/user/${this.props.route.params}`)
                 .then(res => this.setState({
                     firstName: res.data.user.firstName,
                     lastName: res.data.user.lastName,
@@ -72,29 +73,40 @@ class SignUp extends Component {
                 if (this.props.route.name === "SignUp") {
                     this.handleSignUp();
                 };
+            } else this.setState({ repeatPsw: false })
+        };
+        console.log("---0");
+        console.log(pswRepeatError,"pswRepeatError");
+        if (firstNameError && lastNameError && emailError && phoneError) {
+        console.log("---1");
+
+            if (psw === pswrepeat) {     
+        console.log("---02");
+
                 if (this.props.route.name === "Update") {
+                    console.log("update func");
                     this.handleUpdate();
                 };
             } else this.setState({ repeatPsw: false })
-        }
+        };
 
 
     };
 
     handleSignUp = async () => {
         let { firstName, lastName, email, psw, phone } = this.state;
-        await axios.post(`http://6b0f0fe894f8.ngrok.io/users/add-user`, { firstName, lastName, email, psw, phone })
+        await axios.post(`http://a0e8115bb31f.ngrok.io/users/add-user`, { firstName, lastName, email, psw, phone })
             .then(res => {
-                console.log(res, "res");
                 this.setState({
-                    status: res.data.status
+                    status: res.data.status,
+                    errors: res.data.errors ? res.data.errors : null
                 });
             });
     };
 
     handleUpdate = async () => {
         let { firstName, lastName, email, psw, phone } = this.state;
-        await axios.post(`http://6b0f0fe894f8.ngrok.io/users/update/${this.props.route.params}`, { firstName, lastName, email, psw, phone })
+        await axios.post(`http://a0e8115bb31f.ngrok.io/users/update/${this.props.route.params}`, { firstName, lastName, email, psw, phone })
             .then(res => {
                 this.setState({
                     status: res.data.status
@@ -104,7 +116,7 @@ class SignUp extends Component {
 
     render() {
 
-        let { firstNameError, lastNameError, emailError, phoneError, pswError, pswRepeatError, repeatPsw } = this.state
+        let { firstNameError, lastNameError, emailError, phoneError, pswError, pswRepeatError, repeatPsw, errors } = this.state;
 
         if (this.state.status === "done") {
             Alert.alert(
@@ -129,6 +141,8 @@ class SignUp extends Component {
         return (
             <>
                 <ScrollView style={styles.container}>
+                    <View style={styles.errorBlock}>{errors ? Object.values(errors).map((m, index) => <Text key={index} style={styles.errorText}>{m}</Text>) : null}</View>
+
                     <TextInput
                         value={this.state.firstName}
                         type="text"
@@ -173,7 +187,7 @@ class SignUp extends Component {
                         secureTextEntry={true}
                         required
                     />
-                    <View style={styles.errorBlock}>{pswError === false ? <Text style={styles.errorText}>Password is not valid!</Text> : null}</View>
+                    <View style={styles.errorBlock}>{pswError === false && !this.props.route.params ? <Text style={styles.errorText}>Password is not valid!</Text> : null}</View>
                     <TextInput
                         type="password"
                         style={styles.inputs}
@@ -182,7 +196,7 @@ class SignUp extends Component {
                         secureTextEntry={true}
                         required
                     />
-                    <View style={styles.errorBlock}>{pswRepeatError === false ? <Text style={styles.errorText}>Password is not valid!</Text> : null}</View>
+                    <View style={styles.errorBlock}>{pswRepeatError === false && !this.props.route.params? <Text style={styles.errorText}>Password is not valid!</Text> : null}</View>
                     <View style={styles.errorBlock}>{repeatPsw === false ? <Text style={styles.errorText}>Password mismatch!</Text> : null}</View>
                     <View style={styles.signUpBlock}>
                         <TouchableOpacity

@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -6,18 +6,25 @@ const Navigation = ({ navigation }) => {
 
     async function logOut() {
         await AsyncStorage.removeItem("token");
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+        })
     };
 
+
+
+    const [tok, setTok] = useState("");
     let token = null;
-    async function loginOrUsers() {
+    async function getToken() {
         token = await AsyncStorage.getItem("token");
-        if (token !== null) {
-            navigation.navigate('Users');
-        } else navigation.navigate('Login');
+        setTok(token);
     };
+    useEffect(() => {
+        getToken();
+    });
 
-    
-    
+
     return (
         <>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -35,19 +42,22 @@ const Navigation = ({ navigation }) => {
                     <Text style={styles.text}>Sign Up</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    // onPress={loginOrUsers}
-                    style={styles.touchableHighlight}
-                >
-                    <Text style={styles.text}>Users Page</Text>
-                </TouchableOpacity>
+                {tok !== null ?
+                    <>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Users')}
+                            style={styles.touchableHighlight}
+                        >
+                            <Text style={styles.text}>Users Page</Text>
+                        </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={styles.touchableHighlight}
-                    onPress={logOut}
-                >
-                    <Text style={[styles.text,{backgroundColor : "red"}]}>Log Out</Text>
-                </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.touchableHighlight}
+                            onPress={logOut}
+                        >
+                            <Text style={[styles.text, { backgroundColor: "red" }]}>Log Out</Text>
+                        </TouchableOpacity></>
+                    : null}
             </View>
         </>
     );

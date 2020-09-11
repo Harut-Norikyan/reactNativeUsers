@@ -10,7 +10,7 @@ class Users extends Component {
     };
 
     async componentDidMount() {
-        await axios.get(`http://6b0f0fe894f8.ngrok.io/users/get-users`)
+        await axios.get(`http://a0e8115bb31f.ngrok.io/users/get-users`)
             .then(res => {
                 this.setState({
                     data: res.data,
@@ -20,7 +20,7 @@ class Users extends Component {
 
     handleDelete = async (id) => {
         let { data } = this.state
-        await axios.delete(`http://6b0f0fe894f8.ngrok.io/users/delete/${id}`)
+        await axios.delete(`http://a0e8115bb31f.ngrok.io/users/delete/${id}`)
             .then(res => {
                 if (res.data.status === "success") {
                     const newState = this.state;

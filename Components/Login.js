@@ -23,13 +23,18 @@ class Login extends Component {
             pswError: passwordValidation.test(psw),
         })
         if (pswError && emailError) {
-            await axios.post(`http://6b0f0fe894f8.ngrok.io/users/login`, { email, psw })
+            await axios.post(`http://a0e8115bb31f.ngrok.io/users/login`, { email, psw })
                 .then(res => {
                     if (res.data.token) {
                         this.setState({
                             token: AsyncStorage.setItem("token", res.data.token)
                         });
-                        this.props.navigation.navigate("Users");
+                        // this.props.navigation.navigate("Users");
+                        this.props.navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Home' }],
+                        })
+
                     } else { this.setState({ wrongData: res.data.status }) }
                 });
         }
@@ -41,6 +46,7 @@ class Login extends Component {
             <View style={styles.container}>
                 <View style={styles.errorBlock}>{wrongData ? <Text style={styles.errorText}>{wrongData}</Text> : null}</View>
                 <TextInput
+                    keyboardType="email-address"
                     style={styles.inputs}
                     placeholder="Email !"
                     onChangeText={(text) => this.setState({ email: text })}
