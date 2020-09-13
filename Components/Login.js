@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import Port from "./port"
 
 class Login extends Component {
 
@@ -10,26 +11,25 @@ class Login extends Component {
         psw: '',
         token: '',
         wrongData: '',
-        pswError: '',
-        emailError: '',
+        pswError: null,
+        emailError: null,
         emailValidaation: new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/),
         passwordValidation: new RegExp(/(?=.*\d)(?=.*[a-z]).{5,}$/),
     };
 
-    handleSubmit = async () => {
+    handleLogin = async () => {
+
         let { email, psw, pswError, emailError, emailValidaation, passwordValidation } = this.state;
-        await this.setState({
-            emailError: emailValidaation.test(email),
-            pswError: passwordValidation.test(psw),
-        })
+        emailError = emailValidaation.test(email);
+        pswError = passwordValidation.test(psw);
+        this.setState({ emailError, pswError })
         if (pswError && emailError) {
-            await axios.post(`http://a0e8115bb31f.ngrok.io/users/login`, { email, psw })
+            await axios.post(`${Port}/users/login`, { email, psw })
                 .then(res => {
                     if (res.data.token) {
                         this.setState({
                             token: AsyncStorage.setItem("token", res.data.token)
                         });
-                        // this.props.navigation.navigate("Users");
                         this.props.navigation.reset({
                             index: 0,
                             routes: [{ name: 'Home' }],
@@ -68,7 +68,7 @@ class Login extends Component {
                         <Text style={styles.text}>Cancel</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => this.handleSubmit()}>
+                        onPress={() => this.handleLogin()}>
                         <Text style={[styles.text, { backgroundColor: "green" }]}>
                             Login
                                 </Text>

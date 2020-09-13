@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import Port from "./port"
 
 class Users extends Component {
 
@@ -10,7 +11,7 @@ class Users extends Component {
     };
 
     async componentDidMount() {
-        await axios.get(`http://a0e8115bb31f.ngrok.io/users/get-users`)
+        await axios.get(`${Port}/users/get-users`)
             .then(res => {
                 this.setState({
                     data: res.data,
@@ -20,7 +21,7 @@ class Users extends Component {
 
     handleDelete = async (id) => {
         let { data } = this.state
-        await axios.delete(`http://a0e8115bb31f.ngrok.io/users/delete/${id}`)
+        await axios.delete(`${Port}/users/delete/${id}`)
             .then(res => {
                 if (res.data.status === "success") {
                     const newState = this.state;
@@ -45,6 +46,7 @@ class Users extends Component {
                                 <Text><Text style={styles.bold}>Last Name</Text> : {m.lastName}</Text>
                                 <Text><Text style={styles.bold}>Email</Text> : {m.email}</Text>
                                 <Text><Text style={styles.bold}>Phone</Text> : {m.phone}</Text>
+                                <Text><Text style={styles.bold}>Password</Text> : {m.psw}</Text>
 
                                 <View style={styles.updateBlock}>
                                     <TouchableOpacity
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
         width: 80,
         textAlign: "center",
         backgroundColor: "blue",
-        marginRight:20
+        marginRight: 20
     },
     updateBlock: {
         flexDirection: 'row',
