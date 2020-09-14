@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import Img from "./img"
 
 const Navigation = ({ navigation }) => {
 
@@ -27,20 +28,25 @@ const Navigation = ({ navigation }) => {
 
     return (
         <>
+        <Img/>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Login')}
-                    style={styles.touchableHighlight}
-                >
-                    <Text style={styles.text}>Log In</Text>
-                </TouchableOpacity>
+                {!tok?
+                <>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Login')}
+                        style={styles.touchableHighlight}
+                    >
+                        <Text style={styles.text}>Log In</Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('SignUp')}
-                    style={styles.touchableHighlight}
-                >
-                    <Text style={styles.text}>Sign Up</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('SignUp')}
+                        style={styles.touchableHighlight}
+                    >
+                        <Text style={styles.text}>Sign Up</Text>
+                    </TouchableOpacity>
+                </>
+                :null}
 
                 {tok !== null ?
                     <>

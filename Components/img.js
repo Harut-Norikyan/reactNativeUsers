@@ -1,6 +1,8 @@
 import React from 'react'
-import { View, Text, Image, Button, Platform } from 'react-native'
+import { View, Image, Button } from 'react-native'
 import ImagePicker from 'react-native-image-picker'
+import Port from "./port"
+import axios from "axios"
 
 export default class Img extends React.Component {
   state = {
@@ -8,18 +10,36 @@ export default class Img extends React.Component {
   }
 
   handleChoosePhoto = () => {
-    let { photo } = this.state
-    const options = {
-      noData: true,
-    }
-    ImagePicker.launchImageLibrary(options, response => {
+    // ImagePicker.launchImageLibrary(options, response => {
+    ImagePicker.showImagePicker({}, response => {
       if (response.uri) {
-        photo = response
-        const data = new FormData();
-        data.append("image",photo)
+        console.log(response);
+        this.setState({
+          photo: response
+        })
       }
     })
   };
+
+
+handleSignUp = async () => {
+  let photo =  {...this.state.photo};
+  console.log(photo);
+  let data = new FormData();
+  data.append("photo",photo);
+  console.log(data,"data");
+
+      axios.post(`${Port}/users/add-user`,data, 
+        { headers:{
+          "Content-Type": 'multipart/form-data',
+        }}).then(res => {
+                console.log(res, "res");
+                this.setState({
+                    status: res.data.status,
+                    errors: res.data.errors ? res.data.errors : null,
+                });
+            });
+};
   
   
   render() {
@@ -34,7 +54,7 @@ export default class Img extends React.Component {
           />
         )}
         <Button title="Choose Photo" onPress={this.handleChoosePhoto} />
-        <Button title="Upload" onPress={this.handleChoosePhoto} />
+        <Button title="Upload" onPress={this.handleSignUp} />
 
       </View>
     )
