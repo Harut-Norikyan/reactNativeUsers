@@ -10,8 +10,11 @@ export default class Img extends React.Component {
   }
 
   handleChoosePhoto = () => {
+    const options = {
+      noData: true,
+    }
     // ImagePicker.launchImageLibrary(options, response => {
-    ImagePicker.showImagePicker({}, response => {
+    ImagePicker.showImagePicker(options, response => {
       if (response.uri) {
         console.log(response);
         this.setState({
@@ -22,26 +25,37 @@ export default class Img extends React.Component {
   };
 
 
-handleSignUp = async () => {
-  let photo =  {...this.state.photo};
-  console.log(photo);
-  let data = new FormData();
-  data.append("photo",photo);
-  console.log(data,"data");
+  handleSignUp = async () => {
+    let { photo } = this.state;
 
-      axios.post(`${Port}/users/add-user`,data, 
-        { headers:{
-          "Content-Type": 'multipart/form-data',
-        }}).then(res => {
-                console.log(res, "res");
-                this.setState({
-                    status: res.data.status,
-                    errors: res.data.errors ? res.data.errors : null,
-                });
-            });
-};
+    const formData = new FormData();
+    formData.append('photo', photo);
+    formData.append("name", "John")
+    // data.append('photo', JSON.stringify({
+    //   uri: photo.uri,
+    //   type: photo.type,
+    //   name: photo.fileName,
+    // }));
+
+    axios.post(`${Port}/users/add-user`, formData,
+      {
+        headers: {
+          "Content-Type": 'multipart/form-data', 
+          'Accept': 'application/json',
+        }
+      }
+    ).then(res => {
+      console.log(res, "res");
+      this.setState({
+        status: res.data.status,
+        errors: res.data.errors ? res.data.errors : null,
+      });
+    });
+  };
+
+
   
-  
+
   render() {
 
     const { photo } = this.state
