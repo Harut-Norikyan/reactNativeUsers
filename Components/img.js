@@ -6,12 +6,12 @@ import axios from "axios"
 
 export default class Img extends React.Component {
   state = {
-    photo: null,
+    photo: null
   }
 
   handleChoosePhoto = () => {
     // ImagePicker.launchImageLibrary(options, response => {
-    ImagePicker.showImagePicker({}, response => {
+    ImagePicker.showImagePicker(response => {
       if (response.uri) {
         console.log(response);
         this.setState({
@@ -21,29 +21,28 @@ export default class Img extends React.Component {
     })
   };
 
+  handleSignUp = async () => {
+    let { photo } = this.state;
+    let data = new FormData();
+    data.append("photo",JSON.stringify({
+      uri : photo.path,
+      name : photo.fileName,
+      type : photo.type
+    }));
 
-handleSignUp = async () => {
-  let photo =  {...this.state.photo};
-  console.log(photo);
-  let data = new FormData();
-  data.append("photo",photo);
-  console.log(data,"data");
+        axios.post(`${Port}/users/add-user`,data, 
+          { headers:{
+            "Content-Type": 'multipart/form-data',
+          }}).then(res => {
+                  console.log(res, "res");
+                  this.setState({
+                      status: res.data.status,
+                      errors: res.data.errors ? res.data.errors : null,
+                  });
+              });
+  };
 
-      axios.post(`${Port}/users/add-user`,data, 
-        { headers:{
-          "Content-Type": 'multipart/form-data',
-        }}).then(res => {
-                console.log(res, "res");
-                this.setState({
-                    status: res.data.status,
-                    errors: res.data.errors ? res.data.errors : null,
-                });
-            });
-};
-  
-  
   render() {
-
     const { photo } = this.state
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -60,3 +59,4 @@ handleSignUp = async () => {
     )
   }
 }
+
