@@ -28,7 +28,7 @@ const Navigation = ({ navigation }) => {
 
     return (
         <>
-        <Img/>
+        {/* <Img/> */}
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 {!tok?
                 <>

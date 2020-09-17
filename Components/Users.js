@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity,Image } from 'react-native';
 import Port from "./port"
 
 class Users extends Component {
@@ -13,6 +13,7 @@ class Users extends Component {
     async componentDidMount() {
         await axios.get(`${Port}/users/get-users`)
             .then(res => {
+                console.log(res.data);
                 this.setState({
                     data: res.data,
                 });
@@ -30,7 +31,6 @@ class Users extends Component {
                     newState.data.splice(index, 1);
                     this.setState(data);
                 };
-
             });
     };
 
@@ -41,11 +41,17 @@ class Users extends Component {
                 <ScrollView>
                     {data ? data.map((m, index) =>
                         <View key={index}>
+                            <Image
+                                source={{ uri: data.path }}
+                                style={{ width: 200, height: 200 }}
+                            />
                             <View key={m.id} style={styles.container}>
                                 <Text><Text style={styles.bold}>First Name</Text> : {m.firstName}</Text>
                                 <Text><Text style={styles.bold}>Last Name</Text> : {m.lastName}</Text>
                                 <Text><Text style={styles.bold}>Email</Text> : {m.email}</Text>
                                 <Text><Text style={styles.bold}>Phone</Text> : {m.phone}</Text>
+                                <Text><Text style={styles.bold}>Img Id</Text> : {m.imgId || ""}</Text>
+
                                 <Text><Text style={styles.bold}>Password</Text> : {m.psw}</Text>
 
                                 <View style={styles.updateBlock}>

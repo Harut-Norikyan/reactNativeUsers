@@ -2,7 +2,6 @@ import React from 'react'
 import { View, Image, Button, Alert, TextInput } from 'react-native'
 import ImagePicker from 'react-native-image-picker'
 import Port from "./port"
-import axios from "axios"
 import RNFetchBlob from 'rn-fetch-blob'
 
 
@@ -48,13 +47,12 @@ export default class Img extends React.Component {
 
   state = {
     photo: null,
-    name: ""
-  }
+    imgId : ""
+  };
 
   handleChoosePhoto = async () => {
     ImagePicker.showImagePicker({}, (response) => {
       console.log('Response = ', response);
-
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -65,51 +63,38 @@ export default class Img extends React.Component {
         this.setState({
           photo: response
         });
+        this.handleUpload(response)
       }
     });
   };
 
-  // handleSignUp = async () => {
-  //   RNFetchBlob.fetch('POST', `${Port}/users/add-user`, {
-  //     'Content-Type': 'multipart/form-data',
-  //   }, [{ name: 'photo', filename: this.state.photo.fileName, data: this.state.pic }]).
-  //     then((resp) => {
-  //       console.log(resp,"resp");
-  //     })
-  // };
-
-  handleSignUp = async () => {
-    let {name} = this.state
-    // axios.post(`${Port}/users/add-user`,{ name : name}).then(res=>console.log(res,"123"))
-    RNFetchBlob.config({
+  handleUpload = async (response) => {
+    await RNFetchBlob.config({
       fileCache: true,
-    }).fetch('POST', `${Port}/users/add-user`,{
+    }).fetch('POST', `${Port}/users/add-user`, {
       'Content-Type': 'multipart/form-data',
-    }, [{ name: 'photo', filename: this.state.photo.fileName, data: this.state.photo.data }]).
-      then((resp) => {
-        console.log(resp, "resp");
+      // }, [{ name: 'photo', filename: response.fileName, data: response.data }]).
+    }, [{ name: 'photo', filename: response.fileName, data: RNFetchBlob.wrap(response.path) }])
+      .then((res) => {
+        return res.json()
+      }).then((data) => {
+        console.log(data, "jsonData");
       })
   };
 
+
+
   render() {
     const { photo } = this.state
-    console.log(this.state.name);
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         {photo && (
           <Image
             source={{ uri: photo.uri }}
-            style={{ width: 300, height: 300 }}
+            style={{ width: 200, height: 200 }}
           />
         )}
-        <TextInput
-          value={this.state.name}
-          placeholder="Name!"
-          onChangeText={(text) => this.setState({ name: text })}
-        />
         <Button title="Choose Photo" onPress={this.handleChoosePhoto} />
-        <Button title="Upload" onPress={this.handleSignUp} />
-
       </View>
     )
   }
